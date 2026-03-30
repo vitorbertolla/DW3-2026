@@ -31,7 +31,7 @@ server.get("/tarefas", async (request, reply) => {
 
     if (busca !== undefined) {
         if (concluido !== undefined) {
-            const resultado = tarefas.filter(t => t.concluido === "concluido" &&
+            const resultado = tarefas.filter(t => String(t.concluido) === String(concluido) &&
                 t.nome.toLowerCase().includes(busca.toLowerCase()))
             return reply.send(resultado)
         } else {
@@ -41,7 +41,7 @@ server.get("/tarefas", async (request, reply) => {
     }
 
     if (concluido !== undefined) {
-        const resultado = tarefas.filter(t => t.concluido === "concluido")
+        const resultado = tarefas.filter(t => String(t.concluido) === String(concluido))
         return reply.send(resultado)
     }
 

@@ -1,13 +1,19 @@
 import fastify from "fastify";
+import cors from "@fastify/cors"
 
 const server = fastify({})
+    
+server.register(cors, {
+  origin: "*",
+  methods: ['GET', 'POST', 'PATCH', 'DELETE']
+})
 
 server.get("/",  async (request, reply) => {
    reply.send("Nova")
 });
 // rota que devolve um JSON
 server.get("/json",  async (request, reply) => {
-   reply.send({nome: "João"})
+   reply.send({descricao: "João"})
 });
 // exemplo de uma rota retornando uma paágina HTML, o type define o tipo de conteúdo da resposta
 server.get("/html",  async (request, reply) => {
@@ -17,7 +23,7 @@ server.get("/html",  async (request, reply) => {
 // crud básico por meio de rotas
 
 const tarefas = [
-    {id: 1, nome: "Comprar carne", "concluido": "false"},
+    {id: 1, descricao: "Comprar carne", "concluido": "false"},
 ]
 let resumo = {
     "total" : 0,
@@ -32,10 +38,10 @@ server.get("/tarefas", async (request, reply) => {
     if (busca !== undefined) {
         if (concluido !== undefined) {
             const resultado = tarefas.filter(t => String(t.concluido) === String(concluido) &&
-                t.nome.toLowerCase().includes(busca.toLowerCase()))
+                t.descricao.toLowerCase().includes(busca.toLowerCase()))
             return reply.send(resultado)
         } else {
-            const resultado = tarefas.filter(t => t.nome.toLowerCase().includes(busca.toLowerCase()))
+            const resultado = tarefas.filter(t => t.descricao.toLowerCase().includes(busca.toLowerCase()))
             return reply.send(resultado)
         }
     }
@@ -54,7 +60,7 @@ server.get("/tarefas/resumo", async (request, reply ) => {
     const notDone = tarefas.filter(t => t.concluido === false).length
     resumo = {
         "total" : size,
-        "concluido" : done, 
+        "concluidas" : done, 
         "pendentes": notDone 
     }
     reply.send(resumo)
@@ -66,8 +72,9 @@ server.get("/tarefas/resumo", async (request, reply ) => {
 server.post("/tarefas", async (request, reply ) => {
     const novaTarefa = request.body
     novaTarefa.id = tarefas.length + 1
-    if(novaTarefa.nome.trim() === ""){
-        throw new Error("nome é obrigatório")
+    novaTarefa.concluido = false
+    if(novaTarefa.descricao.trim() === ""){
+        throw new Error("descricao é obrigatório")
     }
     tarefas.push(novaTarefa)
     reply.send(novaTarefa)
@@ -79,13 +86,13 @@ server.patch("/tarefas/:id", async (request, reply ) => {
         reply.status(404).send({error: "Tarefa não encontrada"})
         return
     }
-    const { nome } = request.body
-    if (nome) {
-        tarefa.nome = nome
+    const { descricao } = request.body
+    if (descricao) {
+        tarefa.descricao = descricao
     }
     reply.send(tarefa)
 })
-server.patch("/tarefas/:id/concluido", async (request, reply ) => {
+server.patch("/tarefas/:id/concluir", async (request, reply ) => {
     const id =  Number(request.params.id)
     const tarefa = tarefas.find(t => t.id === id)
     if (!tarefa) {

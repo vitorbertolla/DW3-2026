@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import cors from "@fastify/cors"
+import { tarefasRoutes } from "./src/routes/tarefas.route.js";
 
 const server = fastify({})
     
@@ -8,111 +9,12 @@ server.register(cors, {
   methods: ['GET', 'POST', 'PATCH', 'DELETE']
 })
 
-server.get("/",  async (request, reply) => {
-   reply.send("Nova")
-});
-// rota que devolve um JSON
-server.get("/json",  async (request, reply) => {
-   reply.send({descricao: "João"})
-});
-// exemplo de uma rota retornando uma paágina HTML, o type define o tipo de conteúdo da resposta
-server.get("/html",  async (request, reply) => {
-   reply.type("text/html").send("<h1>Nova rota HTML</h1>")
-});
+// aqui registramos as rotas do nosso servidor, passando o prefixo "/tarefas" para todas as rotas definidas em tarefasRoutes, assim não precisamos repetir em cada rota
+server.register(tarefasRoutes, {prefix: "/tarefas"})
 
-// crud básico por meio de rotas
-
-const tarefas = [
-    {id: 1, descricao: "Comprar carne", "concluido": "false"},
-]
-let resumo = {
-    "total" : 0,
-    "concluido" : 0, 
-    "pendentes": 0 
-}
-
-server.get("/tarefas", async (request, reply) => {
-    const busca = request.query.busca
-    const concluido = request.query.concluido
-
-    if (busca !== undefined) {
-        if (concluido !== undefined) {
-            const resultado = tarefas.filter(t => String(t.concluido) === String(concluido) &&
-                t.descricao.toLowerCase().includes(busca.toLowerCase()))
-            return reply.send(resultado)
-        } else {
-            const resultado = tarefas.filter(t => t.descricao.toLowerCase().includes(busca.toLowerCase()))
-            return reply.send(resultado)
-        }
-    }
-
-    if (concluido !== undefined) {
-        const resultado = tarefas.filter(t => String(t.concluido) === String(concluido))
-        return reply.send(resultado)
-    }
-
-    return reply.send(tarefas)
+server.setNotFoundHandler((request, reply) => {
+    reply.status(404).send({error: "Rota não encontrada"})
 })
-
-server.get("/tarefas/resumo", async (request, reply ) => {
-    const size = tarefas.length
-    const done = tarefas.filter(t => t.concluido === true).length
-    const notDone = tarefas.filter(t => t.concluido === false).length
-    resumo = {
-        "total" : size,
-        "concluidas" : done, 
-        "pendentes": notDone 
-    }
-    reply.send(resumo)
-
-
-
-})
-
-server.post("/tarefas", async (request, reply ) => {
-    const novaTarefa = request.body
-    novaTarefa.id = tarefas.length + 1
-    novaTarefa.concluido = false
-    if(novaTarefa.descricao.trim() === ""){
-        throw new Error("descricao é obrigatório")
-    }
-    tarefas.push(novaTarefa)
-    reply.send(novaTarefa)
-})
-server.patch("/tarefas/:id", async (request, reply ) => {
-    const id =  Number(request.params.id)
-    const tarefa = tarefas.find(t => t.id === id)
-    if (!tarefa) {
-        reply.status(404).send({error: "Tarefa não encontrada"})
-        return
-    }
-    const { descricao } = request.body
-    if (descricao) {
-        tarefa.descricao = descricao
-    }
-    reply.send(tarefa)
-})
-server.patch("/tarefas/:id/concluir", async (request, reply ) => {
-    const id =  Number(request.params.id)
-    const tarefa = tarefas.find(t => t.id === id)
-    if (!tarefa) {
-        reply.status(404).send({error: "Tarefa não encontrada"})
-        return
-    }
-    tarefa.concluido = !tarefa.concluido
-    reply.send(tarefa)
-})
-server.delete("/tarefas/:id", async (request, reply ) => {
-    const id =  Number(request.params.id)
-    const index = tarefas.findIndex(t => t.id === id)
-    if (index === -1) {
-        reply.status(404).send({error: "Tarefa não encontrada"})
-        return
-    }
-    tarefas.splice(index, 1)
-    reply.send({message: "Tarefa deletada"})
-})
-
 try {
     console.log("Servidor rodando na porta 3000")
     await server.listen({ port: 3000 })

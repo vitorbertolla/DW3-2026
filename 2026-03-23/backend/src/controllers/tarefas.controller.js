@@ -32,7 +32,7 @@ export class TarefasController {
     async criarTarefa(request, reply) {
         try{
             const novaTarefa = request.body
-            if (novaTarefa.descricao.trim() === ""){
+            if (!novaTarefa.descricao || novaTarefa.descricao.trim() === ""){
                 throw new Error("descricao é obrigatório")
             }
             const resultado = await model.criarTarefa(novaTarefa)

@@ -21,6 +21,14 @@ export class TarefasController {
             return reply.status(500).send({ error: error.message })
         }
     }
+    async pendenteTarefa(request, reply) {
+        try {
+            const resultado = await model.pendenteTarefa()
+            return reply.send(resultado)
+        } catch (error) {
+            return reply.status(500).send({ error: error.message })
+        }
+    }
     async criarTarefa(request, reply) {
         try{
             const novaTarefa = request.body

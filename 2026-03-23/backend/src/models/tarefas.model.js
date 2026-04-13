@@ -22,15 +22,19 @@ export class TarefasModel {
         return (tarefas)
     }
     async resumoTarefa() {
-    const total = tarefas.length
-    const concluidas = tarefas.filter(t => t.concluido).length
-    const pendentes = total - concluidas
+        const total = tarefas.length
+        const concluidas = tarefas.filter(t => t.concluido).length
+        const pendentes = total - concluidas
 
-    return ({
-      total,
-      concluidas,
-      pendentes
-    })
+        return ({
+        total,
+        concluidas,
+        pendentes
+        })
+    }
+    async pendenteTarefa(){
+        const resultado = tarefas.filter(t => !t.concluido)
+        return (resultado)
     }
     async criarTarefa(novaTarefa) {
         if (!novaTarefa.descricao || novaTarefa.descricao.trim() === "") {

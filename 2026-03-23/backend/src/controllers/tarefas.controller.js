@@ -1,11 +1,14 @@
 import { TarefasModel } from "../models/tarefas.model.js"
 const model = new TarefasModel()
 export class TarefasController {
+    constructor(){
+        this.model = model
+    }
     async listarTarefa(request, reply) {
         try{
             const busca = request.query.busca
             const concluido = request.query.concluido
-            const resultado =  await model.listarTarefa(busca, concluido)
+            const resultado =  await this.model.listarTarefa(busca, concluido)
             return reply.send(resultado)
         }
         catch (error) {
@@ -15,7 +18,7 @@ export class TarefasController {
     }
     async resumoTarefa(request, reply) {
         try {
-            const resultado = await model.resumoTarefa()
+            const resultado = await this.model.resumoTarefa()
             return reply.send(resultado)
         } catch (error) {
             return reply.status(500).send({ error: error.message })
@@ -23,7 +26,7 @@ export class TarefasController {
     }
     async pendenteTarefa(request, reply) {
         try {
-            const resultado = await model.pendenteTarefa()
+            const resultado = await this.model.pendenteTarefa()
             return reply.send(resultado)
         } catch (error) {
             return reply.status(500).send({ error: error.message })
@@ -35,7 +38,7 @@ export class TarefasController {
             if (!novaTarefa.descricao || novaTarefa.descricao.trim() === ""){
                 throw new Error("descricao é obrigatório")
             }
-            const resultado = await model.criarTarefa(novaTarefa)
+            const resultado = await this.model.criarTarefa(novaTarefa)
             return reply.send(resultado)
         }catch(error){
             return reply.status(500).send({ error: error.message })
@@ -45,12 +48,12 @@ export class TarefasController {
     async atualizarTarefa(request, reply) {
         try{
             const id = Number(request.params.id)
-            await model.findById(id)
+            await this.model.findById(id)
             const { descricao } = request.body
             if (!descricao || descricao.trim() === "") {
                 throw new Error("descricao é obrigatório")
             }
-            const resultado = await model.atualizarTarefa(id, descricao)
+            const resultado = await this.model.atualizarTarefa(id, descricao)
             return reply.send(resultado)
         }catch(error){
             return reply.status(500).send({ error: error.message })
@@ -59,8 +62,8 @@ export class TarefasController {
     async concluirTarefa(request, reply) {
         try{
             const id = Number(request.params.id)
-            await model.findById(id)
-            const resultado = await model.concluirTarefa(id)
+            await this.model.findById(id)
+            const resultado = await this.model.concluirTarefa(id)
             return reply.send(resultado)
         }catch(error){
             return reply.status(500).send({ error: error.message })}
@@ -68,8 +71,8 @@ export class TarefasController {
     async deletarTarefa(request, reply){
         try{
             const id = Number(request.params.id)
-            await model.findById(id)
-            const resultado = await model.deletarTarefa(id)
+            await this.model.findById(id)
+            const resultado = await this.model.deletarTarefa(id)
             return reply.send(resultado)
         }
         catch (error) {

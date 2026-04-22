@@ -1,6 +1,6 @@
-import { TarefasModel } from "../models/tarefas.model.js"
-const model = new TarefasModel()
-export class TarefasController {
+import model  from "../models/tarefas.model.js"
+
+class TarefasController {
     constructor(){
         this.model = model
     }
@@ -80,3 +80,4 @@ export class TarefasController {
         }
     } 
 }
+export default new TarefasController()

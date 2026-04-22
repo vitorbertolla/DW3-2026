@@ -1,5 +1,4 @@
-import { TarefasController } from "../controllers/tarefas.controller.js"
-const controller = new TarefasController()
+import controller  from "../controllers/tarefas.controller.js"
 
 export function tarefasRoutes(server){
 

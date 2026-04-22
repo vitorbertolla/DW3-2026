@@ -1,9 +1,4 @@
-const tarefas = [
-  { id: 1, descricao: "Fazer compras", concluido: false },
-  { id: 2, descricao: "Lavar o carro", concluido: false },
-  { id: 3, descricao: "Estudar Fastify", concluido: true }
-]
-export class TarefasModel {
+class TarefasModel {
     constructor(){
         this.tarefas = [
             { id: 1, descricao: "Fazer compras", concluido: false },
@@ -15,7 +10,7 @@ export class TarefasModel {
             if (busca !== undefined) {
                 if (concluido !== undefined) {
                     const resultado = this.tarefas.filter(t => String(t.concluido) === String(concluido) &&
-                    t.descricao.toLowerCase().includes(busca.toLowerCase()))
+                      t.descricao.toLowerCase().includes(busca.toLowerCase()))
                     return (resultado)
             }   else {
                     const resultado = this.tarefas.filter(t => t.descricao.toLowerCase().includes(busca.toLowerCase()))
@@ -97,3 +92,4 @@ export class TarefasModel {
         return ({message: "Tarefa deletada com sucesso"})
     }
 }
+export default new TarefasModel()

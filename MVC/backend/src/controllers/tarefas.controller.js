@@ -1,83 +1,75 @@
-import model  from "../models/tarefas.model.js"
+// @file: src/controllers/tarefa.controller.js
 
-class TarefasController {
-    constructor(){
-        this.model = model
-    }
-    async listarTarefa(request, reply) {
-        try{
-            const busca = request.query.busca
-            const concluido = request.query.concluido
-            const resultado =  await this.model.listarTarefa(busca, concluido)
-            return reply.send(resultado)
-        }
-        catch (error) {
-            return reply.status(500).send({ error: error.message })
-        }
+class TarefaController {
+  constructor(service) {      // ← recebe o service de fora
+    this.service = service
+  }
 
-    }
-    async resumoTarefa(request, reply) {
-        try {
-            const resultado = await this.model.resumoTarefa()
-            return reply.send(resultado)
-        } catch (error) {
-            return reply.status(500).send({ error: error.message })
-        }
-    }
-    async pendenteTarefa(request, reply) {
-        try {
-            const resultado = await this.model.pendenteTarefa()
-            return reply.send(resultado)
-        } catch (error) {
-            return reply.status(500).send({ error: error.message })
-        }
-    }
-    async criarTarefa(request, reply) {
-        try{
-            const novaTarefa = request.body
-            if (!novaTarefa.descricao || novaTarefa.descricao.trim() === ""){
-                throw new Error("descricao é obrigatório")
-            }
-            const resultado = await this.model.criarTarefa(novaTarefa)
-            return reply.send(resultado)
-        }catch(error){
-            return reply.status(500).send({ error: error.message })
-        }
+  async listarTarefas(request, reply) {
+    console.log("Controller: listarTarefas chamado")
+    const { busca, concluido } = request.query
+    const resultado = await this.service.listar({ busca, concluido })
+    return reply.send(resultado)
+  }
 
+  async criarTarefa(request, reply) {
+    console.log("Controller: criarTarefa chamado")
+    const { descricao } = request.body
+    if (!descricao || descricao.trim() === '') {
+      return reply.status(400).send({
+        status: 'error',
+        message: 'A descrição da tarefa é obrigatória'
+      })
     }
-    async atualizarTarefa(request, reply) {
-        try{
-            const id = Number(request.params.id)
-            await this.model.findById(id)
-            const { descricao } = request.body
-            if (!descricao || descricao.trim() === "") {
-                throw new Error("descricao é obrigatório")
-            }
-            const resultado = await this.model.atualizarTarefa(id, descricao)
-            return reply.send(resultado)
-        }catch(error){
-            return reply.status(500).send({ error: error.message })
-        }
+    const novaTarefa = await this.service.criar(descricao)
+    return reply.status(201).send(novaTarefa)
+  }
+  
+  async obterResumo(request, reply) {
+    console.log("Controller: obterResumo chamado")
+    const resumo = await this.service.obterResumo()
+    return reply.send(resumo)
+  }
+  async obterTarefa(request, reply) {
+    console.log("Controller: obterTarefa chamado")
+    const id = Number(request.params.id)
+    const tarefa = await this.service.buscarPorId(id)
+    if (!tarefa) {
+      return reply.status(404).send({ status: 'error', message: 'Tarefa não encontrada' })
     }
-    async concluirTarefa(request, reply) {
-        try{
-            const id = Number(request.params.id)
-            await this.model.findById(id)
-            const resultado = await this.model.concluirTarefa(id)
-            return reply.send(resultado)
-        }catch(error){
-            return reply.status(500).send({ error: error.message })}
+    return reply.send(tarefa)
+  }
+
+  async atualizarTarefa(request, reply) {
+    console.log("Controller: atualizarTarefa chamado")
+    const id = Number(request.params.id)
+    const tarefa = await this.service.atualizar(id, request.body)
+    if (!tarefa) {
+      return reply.status(404).send({ status: 'error', message: 'Tarefa não encontrada' })
     }
-    async deletarTarefa(request, reply){
-        try{
-            const id = Number(request.params.id)
-            await this.model.findById(id)
-            const resultado = await this.model.deletarTarefa(id)
-            return reply.send(resultado)
-        }
-        catch (error) {
-            return reply.status(500).send({ error: error.message })
-        }
-    } 
+    return reply.send(tarefa)
+  }
+
+  async concluirTarefa(request, reply) {
+    console.log("Controller: concluirTarefa chamado")
+    const id = Number(request.params.id)
+    const tarefa = await this.service.alternarConcluido(id)
+    if (!tarefa) {
+      return reply.status(404).send({ status: 'error', message: 'Tarefa não encontrada' })
+    }
+    return reply.send(tarefa)
+  }
+
+  async removerTarefa(request, reply) {
+    console.log("Controller: removerTarefa chamado")
+    const id = Number(request.params.id)
+    const removido = await this.service.remover(id)
+    if (!removido) {
+      return reply.status(404).send({ status: 'error', message: 'Tarefa não encontrada' })
+    }
+    return reply.status(204).send()
+  }
+
 }
-export default new TarefasController()
+
+export default TarefaController

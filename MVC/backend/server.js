@@ -1,24 +1,33 @@
-import fastify from "fastify";
-import cors from "@fastify/cors"
-import { tarefasRoutes } from "./src/routes/tarefas.route.js";
+// @file: server.js
 
-const server = fastify({})
-    
+import Fastify from 'fastify'
+import cors from '@fastify/cors'
+
+import tarefaRoutes from './src/routes/tarefas.route.js'
+import TarefaRepository from './src/repositories/tarefas.repository.js'
+import TarefaService from './src/services/tarefas.service.js'
+import TarefaController from './src/controllers/tarefas.controller.js'
+
+const server = Fastify()
+
 server.register(cors, {
-  origin: "*",
-  methods: ['GET', 'POST', 'PATCH', 'DELETE']
+  origin: '*',
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS']
 })
 
-// aqui registramos as rotas do nosso servidor, passando o prefixo "/tarefas" para todas as rotas definidas em tarefasRoutes, assim não precisamos repetir em cada rota
-server.register(tarefasRoutes, {prefix: "/tarefas"})
+// Composition Root: criação e conexão das dependências
+const repository = new TarefaRepository()
+const service = new TarefaService(repository)
+const controller = new TarefaController(service)
 
-server.setNotFoundHandler((request, reply) => {
-    reply.status(404).send({error: "Rota não encontrada"})
-})
-try {
-    console.log("Servidor rodando na porta 3000")
-    await server.listen({ port: 3000 })
-}catch (err){
-    server.log.error(err)
+// Registra as rotas, passando o controller via options
+server.register(tarefaRoutes, { controller })
+
+const PORT = 3000
+server.listen({ port: PORT }, (err) => {
+  if (err) {
+    console.error(err)
     process.exit(1)
-}
+  }
+  console.log(`Servidor rodando em http://localhost:${PORT}`)
+})

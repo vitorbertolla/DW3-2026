@@ -1,40 +1,13 @@
-// @file: src/routes/tarefa.routes.js
+import { TarefasController } from "../controllers/tarefas.controller.js"
+const controller = new TarefasController()
 
-export default async function tarefaRoutes(server, options) {
-  const { controller } = options    // ← recebe o controller de fora
+export function tarefasRoutes(server){
 
-  server.get('/tarefas', async (request, reply) => {
-    console.log("Routes: GET /tarefas chamada")
-    return await controller.listarTarefas(request, reply)
-  })
-
-  server.post('/tarefas', async (request, reply) => {
-    console.log("Routes: POST /tarefas chamada")
-    return await controller.criarTarefa(request, reply)
-  })
-
-  server.get('/tarefas/resumo', async (request, reply) => {
-    console.log("Routes: GET /tarefas/resumo chamada")
-    return await controller.obterResumo(request, reply)
-  })
-
-  server.get('/tarefas/:id', async (request, reply) => {
-    console.log("Routes: GET /tarefas/:id chamada")
-    return await controller.obterTarefa(request, reply)
-  })
-
-  server.patch('/tarefas/:id', async (request, reply) => {
-    console.log("Routes: PATCH /tarefas/:id chamada")
-    return await controller.atualizarTarefa(request, reply)
-  })
-
-  server.patch('/tarefas/:id/concluir', async (request, reply) => {
-    console.log("Routes: PATCH /tarefas/:id/concluir chamada")
-    return await controller.concluirTarefa(request, reply)
-  })
-
-  server.delete('/tarefas/:id', async (request, reply) => {
-    console.log("Routes: DELETE /tarefas/:id chamada")
-    return await controller.removerTarefa(request, reply)
-  })
+    server.get("/", controller.listarTarefa)
+    server.get("/resumo", controller.resumoTarefa)
+    server.get("/pendente", controller.pendenteTarefa)
+    server.post("/", controller.criarTarefa)
+    server.patch("/:id", controller.atualizarTarefa)
+    server.patch("/:id/concluir", controller.concluirTarefa)
+    server.delete("/:id", controller.deletarTarefa)
 }

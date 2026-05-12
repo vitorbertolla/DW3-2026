@@ -39,6 +39,11 @@ class TarefaController {
     }
     return reply.send(tarefa)
   }
+  async obterPendentes(request, reply){
+    console.log("Controller: obterPendentes chamado")
+    const tarefas = await this.service.listarPendentes()
+    return reply.send(tarefas)
+  }
 
   async atualizarTarefa(request, reply) {
     console.log("Controller: atualizarTarefa chamado")

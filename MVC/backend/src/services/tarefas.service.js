@@ -33,7 +33,10 @@ class TarefaService {
     console.log("Service: buscarPorId chamado")
     return this.repository.buscarPorId(id)
   }
-
+  async listarPendentes(){
+    console.log("Service: listarPendentes chamado")
+    return this.repository.buscarPendentes()
+  }
   async atualizar(id, dadosAtualizados) {
     console.log("Service: atualizar chamado")
     return this.repository.atualizar(id, dadosAtualizados)

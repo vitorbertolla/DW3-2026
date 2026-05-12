@@ -16,6 +16,10 @@ class TarefaRepository {
     console.log("Repository: buscarPorId chamado")
     return this.tarefas.find(t => t.id === id) ?? null
   }
+  async buscarPendentes(){
+    console.log("Repository: buscarPendentes chamado")
+    return this.tarefas.filter(t => !t.concluido)
+  }
 
   async salvar(tarefa) {
     console.log("Repository: salvar chamado")

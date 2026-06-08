@@ -7,18 +7,7 @@ export class TarefaService {
   }
 
   async listarTarefas({ busca, status } = {}) {
-    let tarefas = await this.repository.buscarTodos()
-
-    if (status) {
-      tarefas = tarefas.filter(tarefa => tarefa.status === status)
-    }
-
-    if (busca) {
-      tarefas = tarefas.filter(tarefa =>
-        tarefa.descricao.toLowerCase().includes(busca.toLowerCase())
-      )
-    }
-
+    let tarefas = await this.repository.buscarTodos(busca, status)
     return tarefas
   }
 
@@ -40,14 +29,14 @@ export class TarefaService {
 
   async criarTarefa(dados) {
     if (!dados.descricao || dados.descricao.trim() === '') {
-      throw new AppError('O título é obrigatório', 400)
+      throw new AppError('A descrição é obrigatória', 400)
     }
 
     const tarefas = await this.repository.buscarTodos()
     const descricaoJaExiste = tarefas.some(t => t.descricao.toLowerCase() === dados.descricao.toLowerCase().trim())
 
     if (descricaoJaExiste) {
-      throw new AppError('Já existe uma tarefa com esse título', 400)
+      throw new AppError('Já existe uma tarefa com essa descrição', 400)
     }
 
     return this.repository.salvar({ ...dados, status: false })

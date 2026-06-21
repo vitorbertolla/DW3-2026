@@ -28,24 +28,28 @@ export class TarefaService {
   }
 
   async criarTarefa(dados) {
-    if (!dados.descricao || dados.descricao.trim() === '') {
+    const { descricao, projetoId } = dados
+    if (!descricao || descricao.trim() === '') {
       throw new AppError('A descrição é obrigatória', 400)
+    }
+    if (!projetoId) {
+      throw new AppError('O projeto é obrigatório', 400)
     }
 
     const tarefas = await this.repository.buscarTodos()
-    const descricaoJaExiste = tarefas.some(t => t.descricao.toLowerCase() === dados.descricao.toLowerCase().trim())
+    const descricaoJaExiste = tarefas.some(t => t.descricao.toLowerCase() === descricao.toLowerCase().trim())
 
     if (descricaoJaExiste) {
       throw new AppError('Já existe uma tarefa com essa descrição', 400)
     }
 
-    return this.repository.salvar({ ...dados, status: false })
+    return this.repository.salvar({ descricao, projetoId, concluido: false })
   }
 
   async atualizarTarefa(id, dados) {
     const tarefa = await this.buscarPorId(id) // Se não achar, o método acima já lança o AppError 404
 
-    if (tarefa.status === true) {
+    if (tarefa.concluido === true) {
       throw new AppError('Não é possível atualizar uma tarefa já concluída', 400)
     }
 
@@ -55,8 +59,8 @@ export class TarefaService {
   async concluirTarefa(id) {
     const tarefa = await this.buscarPorId(id)
 
-    const novoStatus = !tarefa.status 
-    return this.repository.atualizar(id, { status: novoStatus })
+    const novoStatus = !tarefa.concluido 
+    return this.repository.atualizar(id, { concluido: novoStatus })
   }
 
   async removerTarefa(id) {

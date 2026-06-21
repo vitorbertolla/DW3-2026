@@ -21,22 +21,28 @@ export class TarefaRepository {
   async buscarPorId(id) {
     const resultado = await pool.query(
       `
-        SELECT
-          t.id,
-          t.descricao,
-          t.concluido,
-          t.criada_em,
-          t.projeto_id,
-          p.nome AS projeto_nome
-        FROM tarefas t
-        LEFT JOIN projetos p
-          ON p.id = t.projeto_id
-        WHERE t.id = $1
+      SELECT
+        t.id,
+        t.descricao,
+        t.concluido,
+        t.criada_em,
+        t.projeto_id,
+        p.nome AS projeto_nome,
+        tg.id AS tag_id,
+        tg.nome AS tag_nome
+      FROM tarefas t
+      LEFT JOIN projetos p
+        ON p.id = t.projeto_id
+      LEFT JOIN tarefas_tags tt
+        ON tt.tarefa_id = t.id
+      LEFT JOIN tags tg
+        ON tg.id = tt.tag_id
+      WHERE t.id = $1
       `,
       [id]
     )
 
-    return resultado.rows[0] ?? null
+    return resultado.rows
   }
   async salvar(tarefa) {
     const resultado = await pool.query(

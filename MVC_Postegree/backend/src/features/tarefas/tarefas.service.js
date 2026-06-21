@@ -12,10 +12,30 @@ export class TarefaService {
   }
 
   async buscarPorId(id) {
-    const tarefa = await this.repository.buscarPorId(id)
-    if (!tarefa) {
+    const linhas = await this.repository.buscarPorId(id)
+
+    if (!linhas || linhas.length === 0) {
       throw new AppError('Tarefa não encontrada', 404)
     }
+
+    const tarefa = {
+      id: linhas[0].id,
+      descricao: linhas[0].descricao,
+      concluido: linhas[0].concluido,
+      criada_em: linhas[0].criada_em,
+      projeto: {
+        id: linhas[0].projeto_id,
+        nome: linhas[0].projeto_nome
+      },
+      tags: []
+    }
+
+    linhas.forEach(linha => {
+      if (linha.tag_nome) {
+        tarefa.tags.push(linha.tag_nome)
+      }
+    })
+
     return tarefa
   }
   async obterResumo() {
@@ -34,7 +54,7 @@ export class TarefaService {
     }
     if (!projetoId) {
       throw new AppError('O projeto é obrigatório', 400)
-    }
+    } 
 
     const tarefas = await this.repository.buscarTodos()
     const descricaoJaExiste = tarefas.some(t => t.descricao.toLowerCase() === descricao.toLowerCase().trim())

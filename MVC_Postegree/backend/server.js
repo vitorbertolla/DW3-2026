@@ -2,7 +2,7 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import tarefaRoutes from './src/features/tarefas/tarefas.route.js'
 import { AppError } from './src/errors/AppError.js'
-import client from './src/database/client.js'
+import pool from './src/database/pool.js'
 
 const server = Fastify({ logger: true })
 
@@ -30,7 +30,7 @@ server.setErrorHandler((error, request, reply) => {
 server.register(tarefaRoutes)
 const start = async () => {
   try {
-      await client.connect()
+      await pool.connect()
       console.log('Conectado ao PostgreSQL com sucesso')
       await server.listen({ port: 3000 })
       console.log('Servidor rodando na porta 3000')

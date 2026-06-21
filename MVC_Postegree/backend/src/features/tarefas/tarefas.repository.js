@@ -1,4 +1,4 @@
-import client from "../../database/client.js"
+import pool from "../../database/pool.js"
 export class TarefaRepository {
   async buscarTodos(busca, status) {
     let query = `Select * from tarefas order by id`
@@ -17,12 +17,12 @@ export class TarefaRepository {
       params.push(`%${busca}%`)
     }
 
-    const resultado = await client.query(query, params)
+    const resultado = await pool.query(query, params)
     return resultado.rows
   }
 
   async buscarPorId(id) {
-    const resultado = await client.query(
+    const resultado = await pool.query(
       `
         SELECT id, descricao, concluido, criada_em
         FROM tarefas
@@ -34,7 +34,7 @@ export class TarefaRepository {
     return resultado.rows[0] ?? null
   }
   async salvar(tarefa) {
-    const resultado = await client.query(
+    const resultado = await pool.query(
       `
         INSERT INTO tarefas (descricao, concluido)
         VALUES ($1, $2)
@@ -57,7 +57,7 @@ export class TarefaRepository {
     id: tarefaAtual.id
   }
 
-  const resultado = await client.query(
+  const resultado = await pool.query(
     `
       UPDATE tarefas
       SET descricao = $1,
@@ -72,7 +72,7 @@ export class TarefaRepository {
 }
 
   async remover(id) {
-    const resultado = await client.query(
+    const resultado = await pool.query(
       `
         DELETE FROM tarefas
         WHERE id = $1

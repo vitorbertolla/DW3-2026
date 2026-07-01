@@ -2,8 +2,8 @@ import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import { AppError } from './src/errors/AppError.js'
 import pool from './src/database/pool.js'
-import TimeRoutes from './src/features/times/times.routes.js'
-import EstadoRoutes from './src/features/estados/estados.routes.js'
+import TimeRoutes from './src/features/times/times.route.js'
+import EstadoRoutes from './src/features/estados/estados.route.js'
 
 const server = Fastify({ logger: true })
 

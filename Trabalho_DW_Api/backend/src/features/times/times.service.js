@@ -1,7 +1,8 @@
 import {AppError} from '../../../src/errors/AppError.js'
 export class TimeService {
-    constructor(repository) {
-        this.repository = repository
+    constructor(repository, estadosRepository) {
+        this.repository = repository,
+        this.estadosRepository = estadosRepository
     }
     async buscarTodos(){
         const times = await this.repository.buscarTodos()
@@ -23,6 +24,10 @@ export class TimeService {
         if (nomeJaExiste) {
             throw new AppError('Já existe um time com esse nome')
         }
+        const estado = await this.estadosRepository.buscarPorId(time.estado_id)
+        if (!estado) {
+            throw new AppError(`Estado com id ${time.estado_id} não encontrado`)
+        }
         const timeCriado = await this.repository.criar(time)
         return timeCriado
     }
@@ -36,6 +41,10 @@ export class TimeService {
         }
         if (!dadosAtualizados.nome && !dadosAtualizados.estado_id && !dadosAtualizados.fundacao){
             throw new AppError('Pelo menos um campo deve ser fornecido para atualização')
+        }
+        const estado = await this.estadosRepository.buscarPorId(dadosAtualizados.estado_id)
+        if (!estado) {
+            throw new AppError(`Estado com id ${dadosAtualizados.estado_id} não encontrado`)
         }
         const timeAtualizado = await this.repository.atualizar(id, dadosAtualizados)
         return timeAtualizado

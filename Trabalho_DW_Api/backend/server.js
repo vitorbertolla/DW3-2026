@@ -3,6 +3,7 @@ import cors from '@fastify/cors'
 import { AppError } from './src/errors/AppError.js'
 import pool from './src/database/pool.js'
 import TimeRoutes from './src/features/times/times.routes.js'
+import EstadoRoutes from './src/features/estados/estados.routes.js'
 
 const server = Fastify({ logger: true })
 
@@ -27,6 +28,7 @@ server.setErrorHandler((error, request, reply) => {
   })
 })
 server.register(TimeRoutes)
+server.register(EstadoRoutes)
 const start = async () => {
   try {
       await pool.connect()

@@ -14,6 +14,14 @@ export class TituloService {
         }
         return titulo
     }
+    async buscarCampeoes(id){
+        const titulo = await this.repository.buscarPorId(id)
+        if (!titulo) {
+            throw new AppError(`titulo com id ${id} não encontrado`)
+        }
+        const campeoes = await this.repository.buscarCampeoes(id)
+        return campeoes
+    }
     async criar(titulo){
         if(!titulo.nome){
             throw new AppError('Nome é obrigatórios')

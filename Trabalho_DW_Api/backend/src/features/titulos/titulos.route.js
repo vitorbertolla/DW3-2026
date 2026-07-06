@@ -9,6 +9,7 @@ export default async function TituloRoutes(server) {
 
     server.get('/titulos', controller.buscarTodos.bind(controller))
     server.get('/titulos/:id', controller.buscarPorId.bind(controller))
+    server.get('/titulos/:id/campeoes', controller.buscarCampeoes.bind(controller))
     server.post('/titulos', controller.criar.bind(controller))
     server.patch('/titulos/:id', controller.atualizar.bind(controller))
     server.delete('/titulos/:id', controller.deletar.bind(controller))

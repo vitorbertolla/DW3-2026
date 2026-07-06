@@ -15,6 +15,22 @@ export class TimeService {
         }
         return time
     }
+    async buscarTitulos(id){
+        const time = await this.repository.buscarPorId(id)
+        if (!time) {
+            throw new AppError(`Time com id ${id} não encontrado`)
+        }
+        const titulos = await this.repository.buscarTitulos(id)
+        return titulos
+    }
+    async buscarDetalhes(id){
+        const time = await this.repository.buscarPorId(id)
+        if (!time) {
+            throw new AppError(`Time com id ${id} não encontrado`)
+        }
+        const detalhes = await this.repository.buscarDetalhes(id)
+        return detalhes
+    }
     async criar(time){
         if(!time.nome || !time.estado_id || !time.fundacao){
             throw new AppError('Todos os campos são obrigatórios')

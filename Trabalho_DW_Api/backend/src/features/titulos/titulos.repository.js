@@ -21,6 +21,28 @@ export class TituloRepository{
         `, [id])
         return resultado.rows[0]
     }
+    async buscarCampeoes(id){
+        const resultado = await pool.query(`
+            SELECT
+                ti.nome AS titulo,
+                json_agg(
+                    json_build_object(
+                        'time', t.nome,
+                        'ano', tht.ano
+                    )
+                    ORDER BY tht.ano DESC
+                ) AS campeoes
+            FROM time_has_titulo tht
+            INNER JOIN titulos ti
+                ON ti.id = tht.titulo_id
+            INNER JOIN times t
+                ON t.id = tht.time_id
+            WHERE ti.id = $1
+            GROUP BY ti.nome
+        `, [id])
+
+        return resultado.rows[0]
+    }
     async criar(titulo){
         const resultado = await pool.query(`
             INSERT INTO titulos

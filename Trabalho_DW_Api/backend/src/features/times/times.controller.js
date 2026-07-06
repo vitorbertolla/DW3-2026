@@ -11,6 +11,16 @@ export class TimeController{
         const time = await this.service.buscarPorId(id)
         return reply.send(time)
     }
+    async buscarTitulos(request, reply){
+        const id = Number(request.params.id)
+        const titulos = await this.service.buscarTitulos(id)
+        return reply.send(titulos)
+    }
+    async buscarDetalhes(request, reply){
+        const id = Number(request.params.id)
+        const detalhes = await this.service.buscarDetalhes(id)
+        return reply.send(detalhes)
+    }
     async criar(request, reply){
         const time = request.body
         const timeCriado = await this.service.criar(time)

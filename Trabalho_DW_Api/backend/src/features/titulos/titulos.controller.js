@@ -11,6 +11,11 @@ export class TituloController{
         const titulo = await this.service.buscarPorId(id)
         return reply.send(titulo)
     }
+    async buscarCampeoes(request, reply){
+        const id = Number(request.params.id)
+        const campeoes = await this.service.buscarCampeoes(id)
+        return reply.send(campeoes)
+    }
     async criar(request, reply){
         const titulo = request.body
         const tituloCriado = await this.service.criar(titulo)

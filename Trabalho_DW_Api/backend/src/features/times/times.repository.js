@@ -25,6 +25,59 @@ export class TimeRepository{
         `, [id])
         return resultado.rows[0]
     }
+    async buscarDetalhes(id){
+        const resultado = await pool.query(`
+            SELECT
+                t.nome, 
+                t.fundacao, 
+                e.nome as estado, 
+                et.nome as estadio,
+                et.capacidade,
+                COUNT(tht.id) AS total_titulos
+                FROM times t 
+                INNER JOIN estados e
+                    ON t.estado_id = e.id 
+                INNER JOIN estadios et
+                    ON t.id = et.time_id
+                LEFT JOIN time_has_titulo tht
+                    ON t.id = tht.time_id
+                WHERE t.id = $1
+                GROUP BY
+                    t.id,
+                    t.nome,
+                    t.fundacao,
+                    e.nome,
+                    et.nome,
+                    et.capacidade`, [id])
+        return resultado.rows[0]
+    }
+    async buscarTitulos(id){
+        const resultado = await pool.query(`
+            SELECT
+                t.id,
+                t.nome,
+                e.nome AS estado,
+                json_agg(
+                    json_build_object(
+                        'titulo', ti.nome,
+                        'ano', tht.ano
+                    )
+                    ORDER BY tht.ano DESC
+                ) AS titulos
+            FROM times t
+            INNER JOIN estados e
+                ON e.id = t.estado_id
+            INNER JOIN time_has_titulo tht
+                ON tht.time_id = t.id
+            INNER JOIN titulos ti
+                ON ti.id = tht.titulo_id
+            WHERE t.id = $1
+            GROUP BY
+                t.id,
+                t.nome,
+                e.nome;`, [id])
+        return resultado.rows
+    }
     async criar(time){
         const resultado = await pool.query(`
             INSERT INTO times

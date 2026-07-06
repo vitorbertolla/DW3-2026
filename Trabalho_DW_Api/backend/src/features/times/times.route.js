@@ -11,6 +11,8 @@ export default async function TimeRoutes(server) {
 
     server.get('/times', controller.buscarTodos.bind(controller))
     server.get('/times/:id', controller.buscarPorId.bind(controller))
+    server.get('/times/:id/detalhes', controller.buscarDetalhes.bind(controller))
+    server.get('/times/:id/titulos', controller.buscarTitulos.bind(controller))
     server.post('/times', controller.criar.bind(controller))
     server.patch('/times/:id', controller.atualizar.bind(controller))
     server.delete('/times/:id', controller.deletar.bind(controller))

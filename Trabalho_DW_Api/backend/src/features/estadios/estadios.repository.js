@@ -25,12 +25,12 @@ export class EstadioRepository{
         `, [id])
         return resultado.rows[0]
     }
-    async criar(estadios){
+    async criar(estadio){
         const resultado = await pool.query(`
             INSERT INTO estadios
             (nome, capacidade, time_id ) VALUES ($1, $2, $3)
             RETURNING *`,
-            [estadios.nome, estadios.capacidade, estadios.time_id])
+            [estadio.nome, estadio.capacidade, estadio.time_id])
         return resultado.rows[0]
     }
     async atualizar(id, dadosAtualizados) {

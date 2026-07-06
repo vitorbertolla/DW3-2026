@@ -23,12 +23,12 @@ export class EstadoRepository{
         `, [id])
         return resultado.rows[0]
     }
-    async criar(estados){
+    async criar(estado){
         const resultado = await pool.query(`
             INSERT INTO estados
             (nome, sigla ) VALUES ($1, $2)
             RETURNING *`,
-            [estados.nome, estados.sigla])
+            [estado.nome, estado.sigla])
         return resultado.rows[0]
     }
     async atualizar(id, dadosAtualizados) {

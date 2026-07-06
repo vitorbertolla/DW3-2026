@@ -31,18 +31,22 @@ export class EstadoRepository{
             [estados.nome, estados.sigla])
         return resultado.rows[0]
     }
-    async atualizar(id, dadosAtualizados){
-        const estados = await this.buscarPorId(id)
-        if(!estados){
-            throw new Error(`estados com id ${id} não encontrado`)
-        }
+    async atualizar(id, dadosAtualizados) {
+        const estado = await this.buscarPorId(id);
         const resultado = await pool.query(`
             UPDATE estados
-            SET nome = $1, sigla = $2
+            SET
+                nome = $1,
+                sigla = $2
             WHERE id = $3
             RETURNING *
-        `, [dadosAtualizados.nome, dadosAtualizados.sigla, id])
-        return resultado.rows[0]
+        `, [
+            dadosAtualizados.nome ?? estado.nome,
+            dadosAtualizados.sigla ?? estado.sigla,
+            id
+        ]);
+
+        return resultado.rows[0];
     }
     async deletar(id){
         const estados = await pool.query(`

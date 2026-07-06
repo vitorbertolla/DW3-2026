@@ -33,18 +33,24 @@ export class EstadioRepository{
             [estadios.nome, estadios.capacidade, estadios.time_id])
         return resultado.rows[0]
     }
-    async atualizar(id, dadosAtualizados){
-        const estadios = await this.buscarPorId(id)
-        if(!estadios){
-            throw new Error(`estadios com id ${id} não encontrado`)
-        }
+    async atualizar(id, dadosAtualizados) {
+        const estadio = await this.buscarPorId(id);
         const resultado = await pool.query(`
             UPDATE estadios
-            SET nome = $1, capacidade = $2, time_id = $3
+            SET
+                nome = $1,
+                capacidade = $2,
+                time_id = $3
             WHERE id = $4
             RETURNING *
-        `, [dadosAtualizados.nome, dadosAtualizados.capacidade, dadosAtualizados.time_id, id])
-        return resultado.rows[0]
+        `, [
+            dadosAtualizados.nome ?? estadio.nome,
+            dadosAtualizados.capacidade ?? estadio.capacidade,
+            dadosAtualizados.time_id ?? estadio.time_id,
+            id
+        ]);
+
+        return resultado.rows[0];
     }
     async deletar(id){
         const estadios = await pool.query(`

@@ -42,9 +42,11 @@ export class EstadioService {
         if (!dadosAtualizados.nome && !dadosAtualizados.time_id && !dadosAtualizados.capacidade){
             throw new AppError('Pelo menos um campo deve ser fornecido para atualização')
         }
-        const timeExistente = await this.repositoryTimes.buscarPorId(dadosAtualizados.time_id)
-        if (!timeExistente) {
-            throw new AppError(`Time com id ${dadosAtualizados.time_id} não encontrado`)
+        if (dadosAtualizados.time_id){
+            const timeExistente = await this.repositoryTimes.buscarPorId(dadosAtualizados.time_id)
+                if (!timeExistente) {
+                    throw new AppError(`Time com id ${dadosAtualizados.time_id} não encontrado`)
+                }
         }
         const estadioAtualizado = await this.repository.atualizar(id, dadosAtualizados)
         return estadioAtualizado

@@ -33,18 +33,24 @@ export class TimeRepository{
             [time.nome, time.estado_id, time.fundacao])
         return resultado.rows[0]
     }
-    async atualizar(id, dadosAtualizados){
-        const time = await this.buscarPorId(id)
-        if(!time){
-            throw new Error(`Time com id ${id} não encontrado`)
-        }
+    async atualizar(id, dadosAtualizados) {
+        const time = await this.buscarPorId(id);
         const resultado = await pool.query(`
             UPDATE times
-            SET nome = $1, estado_id = $2, fundacao = $3
+            SET
+                nome = $1,
+                fundacao = $2,
+                estado_id = $3
             WHERE id = $4
             RETURNING *
-        `, [dadosAtualizados.nome, dadosAtualizados.estado_id, dadosAtualizados.fundacao, id])
-        return resultado.rows[0]
+        `, [
+            dadosAtualizados.nome ?? time.nome,
+            dadosAtualizados.fundacao ?? time.fundacao,
+            dadosAtualizados.estado_id ?? time.estado_id,
+            id
+        ]);
+
+        return resultado.rows[0];
     }
     async deletar(id){
         const time = await pool.query(`

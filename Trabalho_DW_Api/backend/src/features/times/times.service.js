@@ -42,9 +42,11 @@ export class TimeService {
         if (!dadosAtualizados.nome && !dadosAtualizados.estado_id && !dadosAtualizados.fundacao){
             throw new AppError('Pelo menos um campo deve ser fornecido para atualização')
         }
-        const estado = await this.estadosRepository.buscarPorId(dadosAtualizados.estado_id)
-        if (!estado) {
-            throw new AppError(`Estado com id ${dadosAtualizados.estado_id} não encontrado`)
+        if (dadosAtualizados.estado_id) {
+            const estado = await this.estadosRepository.buscarPorId(dadosAtualizados.estado_id)
+            if (!estado) {
+                throw new AppError(`Estado com id ${dadosAtualizados.estado_id} não encontrado`)
+            }
         }
         const timeAtualizado = await this.repository.atualizar(id, dadosAtualizados)
         return timeAtualizado

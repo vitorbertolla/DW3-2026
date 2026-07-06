@@ -1,6 +1,6 @@
 import pool from '../../database/pool.js'
 
-export class EstadosRepository{
+export class EstadoRepository{
     async buscarTodos (){
         const resultado = await pool.query(`
         SELECT

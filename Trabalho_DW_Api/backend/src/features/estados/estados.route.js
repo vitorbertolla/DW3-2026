@@ -1,11 +1,11 @@
-import { EstadosController } from "./estados.controller.js";
-import { EstadosService } from "./estados.service.js";
-import { EstadosRepository } from "./estados.repository.js";
+import { EstadoController } from "./estados.controller.js";
+import { EstadoService } from "./estados.service.js";
+import { EstadoRepository } from "./estados.repository.js";
 
-export default async function EstadosRoutes(server) {
-    const repository = new EstadosRepository()
-    const service = new EstadosService(repository)
-    const controller = new EstadosController(service)
+export default async function EstadoRoutes(server) {
+    const repository = new EstadoRepository()
+    const service = new EstadoService(repository)
+    const controller = new EstadoController(service)
 
     server.get('/estados', controller.buscarTodos.bind(controller))
     server.get('/estados/:id', controller.buscarPorId.bind(controller))

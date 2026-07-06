@@ -1,4 +1,4 @@
-export class EstadosController{
+export class EstadoController{
     constructor(service){
         this.service = service
     }

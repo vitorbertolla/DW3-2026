@@ -1,5 +1,5 @@
 import {AppError} from '../../../src/errors/AppError.js'
-export class EstadosService {
+export class EstadoService {
     constructor(repository) {
         this.repository = repository
     }
@@ -36,7 +36,7 @@ export class EstadosService {
         }
         const estadoExistente = await this.repository.buscarPorId(id)
         if (!estadoExistente) {
-            throw new AppError(`estados com id ${id} não encontrado`)
+            throw new AppError(`estado com id ${id} não encontrado`)
         }
         if (!dadosAtualizados.nome && !dadosAtualizados.sigla){
             throw new AppError('Pelo menos um campo deve ser fornecido para atualização')
@@ -50,7 +50,7 @@ export class EstadosService {
         }
         const estadoExistente = await this.repository.buscarPorId(id)
         if (!estadoExistente) {
-            throw new AppError(`estados com id ${id} não encontrado`)
+            throw new AppError(`estado com id ${id} não encontrado`)
         }
         const estadoDeletado = await this.repository.deletar(id)
         return estadoDeletado

@@ -1,11 +1,11 @@
 import { TimeController } from "./times.controller.js";
 import { TimeService } from "./times.service.js";
 import { TimeRepository } from "./times.repository.js";
-import { EstadosRepository } from "../estados/estados.repository.js";
+import { EstadoRepository } from "../estados/estados.repository.js";
 
 export default async function TimeRoutes(server) {
     const repository = new TimeRepository()
-    const estadosRepository = new EstadosRepository()
+    const estadosRepository = new EstadoRepository()
     const service = new TimeService(repository, estadosRepository)
     const controller = new TimeController(service)
 

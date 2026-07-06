@@ -5,6 +5,7 @@ import pool from './src/database/pool.js'
 import TimeRoutes from './src/features/times/times.route.js'
 import EstadoRoutes from './src/features/estados/estados.route.js'
 import EstadioRoutes from './src/features/estadios/estadios.route.js'
+import TituloRoutes from './src/features/titulos/titulos.route.js'
 
 const server = Fastify({ logger: true })
 
@@ -31,6 +32,7 @@ server.setErrorHandler((error, request, reply) => {
 server.register(TimeRoutes)
 server.register(EstadoRoutes)
 server.register(EstadioRoutes)
+server.register(TituloRoutes)
 const start = async () => {
   try {
       await pool.connect()

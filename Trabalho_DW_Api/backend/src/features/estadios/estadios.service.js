@@ -48,6 +48,11 @@ export class EstadioService {
                     throw new AppError(`Time com id ${dadosAtualizados.time_id} não encontrado`)
                 }
         }
+        const estadiosExistentes = await this.repository.buscarTodos()
+        const nomeJaExiste = estadiosExistentes.some(t => t.nome.toLowerCase() === dadosAtualizados.nome.toLowerCase().trim() && t.id !== id)
+        if (nomeJaExiste) {
+            throw new AppError('Já existe um estadios com esse nome')
+        }
         const estadioAtualizado = await this.repository.atualizar(id, dadosAtualizados)
         return estadioAtualizado
     }

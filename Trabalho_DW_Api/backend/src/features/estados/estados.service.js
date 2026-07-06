@@ -41,6 +41,14 @@ export class EstadoService {
         if (!dadosAtualizados.nome && !dadosAtualizados.sigla){
             throw new AppError('Pelo menos um campo deve ser fornecido para atualização')
         }
+        const nomeJaExiste = estadosExistentes.some(t => t.nome.toLowerCase() === dadosAtualizados.nome.toLowerCase().trim() && t.id !== id)
+        if (nomeJaExiste) {
+            throw new AppError('Já existe um estados com esse nome')
+        }
+        const siglaJaExiste = estadosExistentes.some(t => t.sigla.toLowerCase() === dadosAtualizados.sigla.toLowerCase().trim() && t.id !== id)
+        if (siglaJaExiste) {
+            throw new AppError('Já existe um estados com essa sigla')
+        }
         const estadoAtualizado = await this.repository.atualizar(id, dadosAtualizados)
         return estadoAtualizado
     }

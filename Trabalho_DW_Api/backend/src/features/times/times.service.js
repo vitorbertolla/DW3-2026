@@ -48,6 +48,10 @@ export class TimeService {
                 throw new AppError(`Estado com id ${dadosAtualizados.estado_id} não encontrado`)
             }
         }
+        const nomeJaExiste = timesExistentes.some(t => t.nome.toLowerCase() === dadosAtualizados.nome.toLowerCase().trim() && t.id !== id)
+        if (nomeJaExiste) {
+            throw new AppError('Já existe um time com esse nome')
+        }
         const timeAtualizado = await this.repository.atualizar(id, dadosAtualizados)
         return timeAtualizado
     }

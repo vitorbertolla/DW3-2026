@@ -1,5 +1,7 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
+import swagger from '@fastify/swagger'
+import swaggerUi from '@fastify/swagger-ui'
 import { AppError } from './src/errors/AppError.js'
 import pool from './src/database/pool.js'
 import TimeRoutes from './src/features/times/times.route.js'
@@ -8,11 +10,31 @@ import EstadioRoutes from './src/features/estadios/estadios.route.js'
 import TituloRoutes from './src/features/titulos/titulos.route.js'
 import TimeHasTituloRoutes from './src/features/time_has_titulos/time_has_titulos.route.js'
 
-const server = Fastify({ logger: true })
+const server = Fastify({
+  logger: true,
+  ajv: {
+    customOptions: {
+      strict: false
+    }
+  }
+})
 
 await server.register(cors, {
   origin: '*',
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS']
+})
+await server.register(swagger, {
+    openapi: {
+        info: {
+            title: 'API Futebol',
+            description: 'API de Times, Estados, Estádios e Títulos',
+            version: '1.0.0'
+        }
+    }
+})
+
+await server.register(swaggerUi, {
+    routePrefix: '/docs'
 })
 
 server.setErrorHandler((error, request, reply) => {

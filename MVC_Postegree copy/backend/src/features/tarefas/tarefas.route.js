@@ -1,0 +1,26 @@
+import { TarefaService } from './tarefas.service.js'
+import { TarefaController } from './tarefas.controller.js'
+import { TarefaRepository } from './tarefas.repository.js'
+
+export default async function tarefaRoutes(server) {
+
+  // ==========================================
+  // INJEÇÃO DE DEPENDÊNCIA (A MONTAGEM)
+  // ==========================================
+
+  const repository = new TarefaRepository()
+  const service = new TarefaService(repository)
+  const controller = new TarefaController(service)
+
+  // ==========================================
+  // REGISTRO DAS ROTAS
+  // ==========================================
+
+  server.get('/tarefas', async (request, reply) => controller.listar(request, reply))
+  server.post('/tarefas', async (request, reply) => controller.criar(request, reply))
+  server.get('/tarefas/resumo', async (request, reply) => controller.obterResumo(request, reply))
+  server.get('/tarefas/:id', async (request, reply) => controller.buscar(request, reply))
+  server.patch('/tarefas/:id', async (request, reply) => controller.atualizar(request, reply))
+  server.patch('/tarefas/:id/concluir', async (request, reply) => controller.concluir(request, reply))
+  server.delete('/tarefas/:id', async (request, reply) => controller.remover(request, reply))
+}
